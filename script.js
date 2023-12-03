@@ -1,55 +1,34 @@
-let timer;
-let isRunning = false;
-let seconds = 0;
-let laps = [];
 
-function startPause() {
-  if (isRunning) {
-    clearInterval(timer);
-    document.getElementById('startPause').innerText = 'Start';
-  } else {
-    timer = setInterval(updateDisplay, 1000);
-    document.getElementById('startPause').innerText = 'Pause';
-  }
-  isRunning = !isRunning;
-}
+var time = document.getElementById("time");
+var day = document.getElementById("day");
+var midday = document.getElementById("midday");
 
-function updateDisplay() {
-  seconds++;
-  const display = formatTime(seconds);
-  document.getElementById('display').innerText = display;
-}
+var clock = setInterval(
+    function calcTime(){
+        var date_now = new Date();
+        var hr = date_now.getHours();
+        var min = date_now.getMinutes();
+        var sec = date_now.getSeconds();
+        var middayValue = "AM"
+        var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-function reset() {
-  clearInterval(timer);
-  isRunning = false;
-  seconds = 0;
-  laps = [];
-  document.getElementById('display').innerText = '00:00:00';
-  document.getElementById('startPause').innerText = 'Start';
-  document.getElementById('laps').innerText = '';
-}
+        day.textContent = days[date_now.getDay()];
 
-function recordLap() {
-  if (isRunning) {
-    laps.push(formatTime(seconds));
-    displayLaps();
-  }
-}
+        middayValue = (hr >= 12) ? "PM" : "AM";
 
-function displayLaps() {
-  const lapsElement = document.getElementById('laps');
-  lapsElement.innerHTML = '';
-  laps.forEach((lap, index) => {
-    const lapItem = document.createElement('div');
-    lapItem.innerText = `Lap ${index + 1}: ${lap}`;
-    lapsElement.appendChild(lapItem);
-  });
-}
+        if(hr == 0){
+            hr = 12;
+        }
+        else if(hr > 12){
+            hr-=12;
+        }
 
-function formatTime(totalSeconds) {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
+        hr = (hr < 10) ? "0" + hr : hr;
+        min = (min < 10) ? "0" + min : min;
+        sec = (sec < 10) ? "0" + sec : sec;
+
+        time.textContent = hr + ":" + min + ":" + sec;
+        midday.textContent = middayValue;
+    },
+    1000
+);
